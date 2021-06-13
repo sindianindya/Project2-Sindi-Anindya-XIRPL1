@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -51,6 +52,7 @@ public class DataSiswa extends javax.swing.JFrame {
             }
         } catch (SQLException ex){
             ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Terjadi Kesalahan di Query");
         }
         
         tbl_siswa.setModel(dtm);
@@ -86,6 +88,11 @@ public class DataSiswa extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tbl_siswa.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_siswaMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tbl_siswa);
 
         label1.setText("DATA SISWA");
@@ -93,6 +100,11 @@ public class DataSiswa extends javax.swing.JFrame {
         cmdRefresh.setText("Refresh");
 
         cmdTambah.setText("Tambah");
+        cmdTambah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdTambahActionPerformed(evt);
+            }
+        });
 
         cmdEdit.setText("Ubah");
         cmdEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -157,7 +169,35 @@ public class DataSiswa extends javax.swing.JFrame {
 
     private void cmdHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdHapusActionPerformed
         // TODO add your handling code here:
+        String idWhoWantToBeDelete = tbl_siswa.getValueAt(baris, 0).toString();
+        try{
+            Statement stmt = koneksi.createStatement();
+            String query = "DELETE FROM t_siswa WHERE nis = '"+idWhoWantToBeDelete+"'";
+            
+            int berhasil = stmt.executeUpdate(query);
+            if(berhasil == 1){
+                JOptionPane.showMessageDialog(null, "Data Berhasil Dihapus!");
+                dtm.getDataVector().removeAllElements();
+                showData();
+            } else {
+                JOptionPane.showMessageDialog(null, "Data Gagal Dihapus!");
+            }
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
     }//GEN-LAST:event_cmdHapusActionPerformed
+
+    private void cmdTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdTambahActionPerformed
+        // TODO add your handling code here:
+        ManageData.tambahData = new ManageData(this, true);
+        tambahData.setVisible(true);
+    }//GEN-LAST:event_cmdTambahActionPerformed
+
+    int baris;
+    private void tbl_siswaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_siswaMouseClicked
+        // TODO add your handling code here:
+        baris = tbl_siswa.getSelectedRow();
+    }//GEN-LAST:event_tbl_siswaMouseClicked
 
     /**
      * @param args the command line arguments
